@@ -16,9 +16,10 @@ class AssignsController < ApplicationController
 
   def destroy
     assign = Assign.find(params[:id])
-    destroy_message = assign_destroy(assign, assign.user)
-
-    redirect_to team_url(params[:team_id]), notice: destroy_message
+    if assign.user == current_user || assign.team.owner == current_user
+      destroy_message = assign_destroy(assign, assign.user)
+      redirect_to team_url(params[:team_id]), notice: destroy_message
+    end
   end
 
   private
@@ -62,7 +63,12 @@ class AssignsController < ApplicationController
     change_keep_team(assigned_user, another_team) if assigned_user.keep_team_id == assign.team_id
   end
 
-  def find_team(team_id)
-    team = Team.friendly.find(params[:team_id])
+  # def find_team(team_id)
+  #   team = Team.friendly.find(params[:team_id])
+  # end
+
+  # RuboCopに指摘された場所修正
+  def find_team(*)
+    Team.friendly.find(params[:team_id])
   end
 end
