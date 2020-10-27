@@ -26,6 +26,7 @@ class AgendasController < ApplicationController
     if @agenda.user_id == current_user.id || @agenda.team.owner_id == current_user.id
       @agenda.destroy
       redirect_to dashboard_path, notice: "#{@agenda.title}を削除しました"
+      AgendaDestroyMailer.agenda_destroy_mailer(@agenda.team.members.pluck(:email), @agenda).deliver
     else
       redirect_to dashboard_path, notice: "削除できません"
     end
