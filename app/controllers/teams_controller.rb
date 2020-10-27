@@ -54,6 +54,7 @@ class TeamsController < ApplicationController
       @user = User.find(params[:user_id])
       if @user != current_user
         @team.update(owner_id: @user.id)
+        AssignMailer.change_owner_mail(@user.email, @team.name).deliver
         redirect_to @team, notice: 'リーダー権限を移動しました。'
       else
         redirect_to @team, notice: 'リーダーはあなたです。'
