@@ -8,8 +8,10 @@ Rails.application.routes.draw do
     passwords: 'users/passwords'
   }
   resource :user
-  
+
+  # post "change_owner", to: 'teams#change_owner'
   resources :teams do
+    post 'change_owner'
     resources :assigns, only: %w(create destroy)
     resources :agendas, shallow: true do
       resources :articles do

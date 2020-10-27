@@ -47,6 +47,24 @@ class TeamsController < ApplicationController
     @team = current_user.keep_team_id ? Team.find(current_user.keep_team_id) : current_user.teams.first
   end
 
+  def change_owner
+    # binding.irb
+    @team = Team.friendly.find(params[:team_id])
+    if @team.owner == current_user
+      @user = User.find(params[:user_id])
+      if @user != current_user
+        @team.update(owner_id: @user.id)
+        AssignMailer.change_owner_mail(@user.email, @team.name).deliver
+        redirect_to @team, notice: 'リーダー権限を移動しました。'
+      else
+        redirect_to @team, notice: 'リーダーはあなたです。'
+      end
+    else
+      redirect_to @team, notice: 'リーダー権限を移動できません'
+    end
+  end
+
+
   private
 
   def set_team
